@@ -1,6 +1,7 @@
 const userModel = require("../../model/v1/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const banUserModel = require("./../../model/v1/ban-phone");
 
 require("dotenv").config()
 
@@ -21,6 +22,14 @@ exports.register = async (req, res) => {
     if (isuserExist) {
         return res.status(409).json({
             message: 'user already exist'
+        });
+    }
+
+    const isUserBan = await banUserModel.find({ phone:phone });
+
+    if (isUserBan.length) {
+        return res.status(409).json({
+            message: 'this phone number is banned'
         });
     }
 
@@ -48,7 +57,31 @@ exports.register = async (req, res) => {
 
 
 exports.login = async (req, res) => {
+    const {identifier, password} = req.body;
 
+    const user = await userModel.findOne({
+        $or: [{email: identifier}, {username: identifier}]
+    });
+
+    if (!user) {
+        return res.status(401).json({
+            message: 'there is no user with this username or email'
+        });
+    }
+    
+    const isPassValid = await bcrypt.compare(password, user.password);
+
+    if (!isPassValid) {
+        return res.status(401).json({
+            message: 'password is not valid'
+        });
+    }
+    
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET,
+        {expiresIn: '60 days'}
+    );
+
+    return res.json({ accessToken });
 };
 
 
