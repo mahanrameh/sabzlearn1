@@ -8,8 +8,8 @@ const port = process.env.PORT;
 
 
 (async () => {
-    await mongoose.connect(process.env.MONGO_URI)
-})()
+    await mongoose.connect(process.env.MONGO_URI);
+})();
 
 app.get('/', (req, res) => {
     console.log('token =', req.header("Authorization").split(' ')[1]);
@@ -20,5 +20,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`server running on port ${port}`)
-})
+    console.log(`server running on port ${port}`);
+});

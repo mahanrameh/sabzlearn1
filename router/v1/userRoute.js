@@ -5,11 +5,24 @@ const isAdminWares = require("./../../middleWare/isAdmin");
 
 const router = express.Router();
 
+router
+    .route('/')
+    .get(authWares, isAdminWares, userController.getAll)
+    .put(authWares, userController.updateUser);
 
 router
-.route('/ban/:id')
-.post(authWares, isAdminWares, userController.banUser);
+    .route('/delete/:id')
+    .delete(authWares, isAdminWares, userController.removeUser);
+
+router
+    .route('/role/')
+    .put(authWares, isAdminWares, userController.changeRole);
+
+
+router
+    .route('/ban/:id')
+    .post(authWares, isAdminWares, userController.banUser);
 
 
 
-module.exports = router
+module.exports = router;
