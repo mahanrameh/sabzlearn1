@@ -27,8 +27,8 @@ const schema = new mongoose.Schema({
         enum: ['ADMIN','USER'],
         default: 'USER'
     }
-},
-{timestamps: true});
+},  {timestamps: true}
+);
 
 const model = mongoose.model('user',schema);
 

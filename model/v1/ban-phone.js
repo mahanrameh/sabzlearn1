@@ -5,8 +5,8 @@ const schema = new mongoose.Schema({
         type: String,
         required: true
     }
-},
-{timestamps: true});
+},  {timestamps: true}
+);
 
 const model = mongoose.model('banUser',schema);
 
