@@ -48,14 +48,14 @@ const schema = mongoose.Schema({
 
 schema.virtual('session', {
     ref: 'session',
-    localfield: '_id',
-    foreginfield: 'course'
+    localField: '_id',
+    foreignField: 'course'
 });
 
 schema.virtual('comment', {
     ref: 'comment',
-    localfield: '_id',
-    foreginfield: 'course'
+    localField: '_id',
+    foreignField: 'course'
 });
 
 const model = mongoose.model('course', schema);
