@@ -4,6 +4,7 @@ const userRouter = require("./router/v1/userRoute");
 const categoryRouter = require("./router/v1/categoryRoute");
 const courseRouter = require("./router/v1/courseRoute");
 const commentRouter = require("./router/v1/commentRoute");
+const contactRouter = require("./router/v1/contactRoute");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -23,6 +24,7 @@ app.use('/v1/user', userRouter);
 app.use('/v1/course', courseRouter);
 app.use('/v1/comment', commentRouter);
 app.use('/v1/category', categoryRouter);
+app.use('/v1/contact', contactRouter);
 
 
 

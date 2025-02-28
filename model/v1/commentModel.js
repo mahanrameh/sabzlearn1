@@ -25,7 +25,7 @@ const schema = mongoose.Schema({
         type: Number,
         default: 5
     },
-    isResponsed: {
+    isResponse: {
         type: Number,
         default: 0,
         required: true

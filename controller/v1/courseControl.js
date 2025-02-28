@@ -2,7 +2,10 @@ const courseModel = require("./../../model/v1/courseModel");
 const userModel = require("./../../model/v1/userModel");
 const studentModel = require("./../../model/v1/studentModel");
 const sessionModel = require("./../../model/v1/sessionModel");
+const commentModel = require("./../../model/v1/commentModel");
+const categoryModel = require("./../../model/v1/categoryModel");
 const { isValidObjectId} = require("mongoose");
+const { answer } = require("./commentControl");
 
 
 
@@ -85,8 +88,69 @@ exports.register = async (req, res) => {
 
 };
 
-exports.getall = async (req, res) => {
+exports.getCourse = async (req, res) => {
+    const { href } = req.params;
+    const category = await categoryModel.findOne({ href: href});
 
+    if (category) {
+        const categoryCourse = await courseModel.find({ 
+        categoryID: category._id });
+        
+        return res.json(categoryCourse);
+    }
+    else {
+        res.json([])
+    }
+
+};
+
+exports.getCourseInfo = async (req, res) => {
+    const { href } = req.params;
+    const course = await courseModel.findOne({ href: href })
+    .populate('creator', '-password')
+    .populate('categoryID');
+
+    const courseStudent = await studentModel.find({ course: course._id }).lean();
+    const courseSession = await sessionModel.find({ course: course._id }).lean();
+    const courseComment = await commentModel.find({ course: course._id, isAccept: 1 })
+    .populate('creator', '-password')
+    .populate('course').lean();
+
+    const isUserRegister = !!(await studentModel.findOne({
+        user: req.user._id,
+        course: course._id
+    }));
+
+    let allComment = [];
+
+    courseComment.forEach(comment => {
+        const answerComment = courseComment.find(answerComment => 
+            String(comment._id) == String(answerComment.mainCommentID)
+        );
+    
+        if (answerComment) {
+            allComment.push({
+                ...comment,
+                course: comment.course.name,
+                creator: comment.creator.name,
+                answerComment: {
+                    ...answerComment,
+                    course: answerComment.course.name,
+                    creator: answerComment.creator.name
+                }
+            });
+        } else {
+            allComment.push({
+                ...comment,
+                course: comment.course.name,
+                creator: comment.creator.name
+            });
+        }
+    });
+    
+
+
+    res.json({course, courseSession, courseComment: allComment, courseStudent, isUserRegister});
 };
 
 exports.getallSession = async (req, res) => {
@@ -104,8 +168,69 @@ exports.getSessionInfo = async (req, res) => {
     return res.json({courseSession, allSessions});
 };
 
-exports.delete = async (req, res) => {
+exports.getRelated = async (req, res) => {
+    const {href} = req.params;
+    const course = await courseModel.findOne({ href: href });
 
+    if (!course) {
+        return res.status(404).json({
+            message: 'course not found '
+        });
+    }
+
+    let relatedCourse = await courseModel.find({ categoryID: course.categoryID });
+    relatedCourse = relatedCourse.filter(course => course.href !== href);
+
+    return res.json(relatedCourse)
+};
+
+exports.popularCourse = async (req, res) => {
+    const courseStudent = await studentModel.find({ }).lean();
+
+    const courseCount = {};
+    
+    courseStudent.forEach(student => {
+        if (courseCount[student.course]) {
+            courseCount[student.course]++;
+        } else {
+            courseCount[student.course] = 1;
+        }
+    });
+    
+    
+    let popularCourse = null;
+    let maxCount = 0;
+    
+    for (const [course, count] of Object.entries(courseCount)) {
+        if (count > maxCount) {
+            maxCount = count;
+            popularCourse = course;
+        }
+    }
+    
+    return res.json({ popularCourse, count: maxCount });
+    
+};
+
+exports.presellCourse = async (req, res) => {
+    const presell = await courseModel.find({ }).lean();
+    
+    const allPresell = []
+
+    presell.forEach(course => {
+        const presellCourse = presell.find(presellCourse =>
+            course.status == 'presell'
+        );
+
+        if (presellCourse) {
+            allPresell.push({...course})
+        }
+    })
+
+    return res.json(allPresell);
+};
+
+exports.deleteCourse = async (req, res) => {
     const isValidCourse = isValidObjectId(req.params.id);
     
     
@@ -115,17 +240,39 @@ exports.delete = async (req, res) => {
         });
     }
 
-    const deleteCourse = await sessionModel.findOneAndDelete({
-        _id: req.params.id
-    });
+    const deleteCourse = await courseModel.findOneAndDelete({ _id: req.params.id });
 
     if (!deleteCourse) {
         return res.status(404).json({
             message: 'course not found'
         });
     }
-
+    
     return res.json(deleteCourse)
+};
+
+exports.deleteSession = async (req, res) => {
+
+    const isValidSession = isValidObjectId(req.params.id);
+    
+    
+    if (!isValidSession) {
+        return res.status(409).json({
+            message: 'session id is not valid'
+        });
+    }
+
+    const deleteSession = await sessionModel.findOneAndDelete({
+        _id: req.params.id
+    });
+
+    if (!deleteSession) {
+        return res.status(404).json({
+            message: 'session not found'
+        });
+    }
+
+    return res.json(deleteSession)
 };
 
 exports.update = async (req, res) => {
