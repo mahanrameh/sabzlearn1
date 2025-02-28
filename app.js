@@ -5,6 +5,9 @@ const categoryRouter = require("./router/v1/categoryRoute");
 const courseRouter = require("./router/v1/courseRoute");
 const commentRouter = require("./router/v1/commentRoute");
 const contactRouter = require("./router/v1/contactRoute");
+const newsRouter = require("./router/v1/newsRoute");
+const searchRouter = require("./router/v1/searchRoute");
+const notificationRouter = require("./router/v1/notificationRoute");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -25,6 +28,9 @@ app.use('/v1/course', courseRouter);
 app.use('/v1/comment', commentRouter);
 app.use('/v1/category', categoryRouter);
 app.use('/v1/contact', contactRouter);
+app.use('/v1/newsLetter', newsRouter);
+app.use('/v1/search', searchRouter);
+app.use('/v1/notification', notificationRouter);
 
 
 
