@@ -12,8 +12,8 @@ router
     .route("/")
     // .get(authWares, isAdmin, courseController.getAll)
     .post(
-         multer({storage: multerStorage, limits: {fileSize: 1000000000}}).single('cover'),
          authWares, isAdmin,
+         multer({storage: multerStorage, limits: {fileSize: 1000000000}}).single('cover'),
          courseController.create);
 
 router

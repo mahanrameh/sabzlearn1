@@ -75,5 +75,11 @@ exports.deleteMessage = async (req, res) => {
 
     const notification = await notificationModel.findOneAndDelete({ _id: id });
 
+    if (!notification) {
+        return res.status(404).json({
+            message: 'notification not found'
+        })
+    }
+
     return res.json(notification);
 };

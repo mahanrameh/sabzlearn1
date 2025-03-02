@@ -8,6 +8,8 @@ const contactRouter = require("./router/v1/contactRoute");
 const newsRouter = require("./router/v1/newsRoute");
 const searchRouter = require("./router/v1/searchRoute");
 const notificationRouter = require("./router/v1/notificationRoute");
+const offRouter = require("./router/v1/offRoute");
+const articleRouter = require("./router/v1/articleRoute");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -31,6 +33,8 @@ app.use('/v1/contact', contactRouter);
 app.use('/v1/newsLetter', newsRouter);
 app.use('/v1/search', searchRouter);
 app.use('/v1/notification', notificationRouter);
+app.use('/v1/off', offRouter);
+app.use('/v1/article', articleRouter);
 
 
 
