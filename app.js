@@ -10,6 +10,8 @@ const searchRouter = require("./router/v1/searchRoute");
 const notificationRouter = require("./router/v1/notificationRoute");
 const offRouter = require("./router/v1/offRoute");
 const articleRouter = require("./router/v1/articleRoute");
+const orderRouter = require("./router/v1/orderRoute");
+const ticketRouter = require("./router/v1/ticketRoute");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -35,6 +37,8 @@ app.use('/v1/search', searchRouter);
 app.use('/v1/notification', notificationRouter);
 app.use('/v1/off', offRouter);
 app.use('/v1/article', articleRouter);
+app.use('/v1/order', orderRouter);
+app.use('/v1/ticket', ticketRouter);
 
 
 
