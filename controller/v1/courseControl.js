@@ -64,6 +64,10 @@ exports.createSession = async (req, res) => {
     return res.status(201).json(session);
 }; 
 
+exports.update = async (req, res) => {
+
+};
+
 exports.register = async (req, res) => {
     const isAlreadyRegister = await studentModel.findOne(
         { user: req.user._id,
@@ -86,6 +90,47 @@ exports.register = async (req, res) => {
         message: 'you are registered successfully'
     })
 
+};
+
+exports.getAll = async (req, res) => {
+    const course = await courseModel.find({ })
+    .populate('categoryID', 'title href')
+    .populate('creator', 'name email')
+    .lean()
+    .sort({ _id: -1 });
+
+    const register = await studentModel.find({ })
+    .lean();
+    const comment = await commentModel.find({ })
+    .lean();
+
+    const allCourse = [];
+
+    course.forEach(course => {
+        let courseTotalScore = 5;
+        const courseRegister = register.filter(
+            (register) => register.course.toString() == course._id.toString()
+        );
+
+        const courseComment = comment.filter(
+            (comment) => { return comment.course.toString() == course._id.toString();
+        });
+
+        courseComment.forEach(
+            (comment) => (courseTotalScore += Number(comment.score))
+        );
+                
+        allCourse.push({
+            ...course,
+            categoryID: course.categoryID.title,
+            creator: course.creator.name,
+            register: courseRegister.length,
+            courseScore: Math.floor(courseTotalScore / (courseComment.length + 1))
+        });
+    });
+
+    
+    return res.json(allCourse);
 };
 
 exports.getCourse = async (req, res) => {
@@ -273,8 +318,4 @@ exports.deleteSession = async (req, res) => {
     }
 
     return res.json(deleteSession)
-};
-
-exports.update = async (req, res) => {
-
 };

@@ -12,6 +12,7 @@ const offRouter = require("./router/v1/offRoute");
 const articleRouter = require("./router/v1/articleRoute");
 const orderRouter = require("./router/v1/orderRoute");
 const ticketRouter = require("./router/v1/ticketRoute");
+const menuRouter = require("./router/v1/menuRoute");
 const cors = require("cors");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -39,6 +40,7 @@ app.use('/v1/off', offRouter);
 app.use('/v1/article', articleRouter);
 app.use('/v1/order', orderRouter);
 app.use('/v1/ticket', ticketRouter);
+app.use('/v1/menu', menuRouter);
 
 
 

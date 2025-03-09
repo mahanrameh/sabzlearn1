@@ -10,7 +10,7 @@ const router = express.Router();
 
 router
     .route("/")
-    // .get(authWares, isAdmin, courseController.getAll)
+    .get(authWares, isAdmin, courseController.getAll)
     .post(
          authWares, isAdmin,
          multer({storage: multerStorage, limits: {fileSize: 1000000000}}).single('cover'),
